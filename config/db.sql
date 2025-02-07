@@ -46,6 +46,7 @@ CREATE TABLE products (
 );
 
 ALTER TABLE products ADD COLUMN image VARCHAR(128);
+
 CREATE TABLE categoryItem(
     id INT AUTO_INCREMENT PRIMARY KEY,
     category_id INT,

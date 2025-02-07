@@ -44,13 +44,19 @@ async function findOne(req, res) {
 
 async function create(req, res) {
     try {
-        const { user_id, total_prise } = req.body;
+        const { user_id,products, total_prise } = req.body;
 
-        const query = `
+        const [createdOrder] = await db.query(`
             INSERT INTO orders (user_id, total_prise)
             VALUES (?, ?);
-        `;
-        const [createdOrder] = await db.query(query, [user_id, total_prise]);
+        `, [user_id, total_prise]);
+            
+        for (const prod of products) {
+            await db.query(`
+                INSERT INTO orderItem (product_id, order_id, count, total)
+                VALUES (?, ?, ?, ?);
+            `, [prod.id, createdOrder.insertId, prod.count, prod.count]);
+        }
 
         res.status(201).json({ message: createdOrder.insertId });
     } catch (error) {
